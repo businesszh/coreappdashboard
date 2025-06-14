@@ -29,7 +29,12 @@ async function getResourcesFromGitHub() {
 }
 
 function getLocalResources() {
-  return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+  try {
+    return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+  } catch (error) {
+    console.error('Error reading local resources:', error);
+    return [];
+  }
 }
 
 export async function GET(req) {
@@ -41,10 +46,11 @@ export async function GET(req) {
       const resources = await getResourcesFromGitHub();
       return NextResponse.json(resources);
     } catch (error) {
-      return NextResponse.json({ error: 'Failed to fetch resources from GitHub' }, { status: 500 });
+      console.error('GitHub API error:', error);
+      const localResources = getLocalResources();
+      return NextResponse.json(localResources);
     }
   } else {
-    // Default to local file for homepage
     const resources = getLocalResources();
     return NextResponse.json(resources);
   }
@@ -69,8 +75,7 @@ export async function POST(req) {
       sha: currentFile.sha,
     });
 
-    // Update local file as well
-    //fs.writeFileSync(localPath, JSON.stringify(updatedResources, null, 2));
+    fs.writeFileSync(localPath, JSON.stringify(updatedResources, null, 2));
 
     return NextResponse.json(updatedResources);
   } catch (error) {
