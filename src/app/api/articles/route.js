@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 import matter from 'gray-matter';
+import fs from 'fs';
+import path from 'path';
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
@@ -10,6 +12,33 @@ const owner = process.env.GITHUB_OWNER;
 const repo = process.env.GITHUB_REPO;
 const articlesJsonPath = 'data/json/articles.json';
 const mdFolderPath = 'data/md';
+const localArticlesJsonPath = path.join(process.cwd(), 'data', 'json', 'articles.json');
+const localMdFolderPath = path.join(process.cwd(), 'data', 'md');
+
+async function getArticlesFromGitHub() {
+  try {
+    const { data } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path: articlesJsonPath,
+    });
+
+    const content = Buffer.from(data.content, 'base64').toString('utf8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error('Error fetching articles from GitHub:', error);
+    throw error;
+  }
+}
+
+function getLocalArticles() {
+  try {
+    return JSON.parse(fs.readFileSync(localArticlesJsonPath, 'utf8'));
+  } catch (error) {
+    console.error('Error reading local articles:', error);
+    return [];
+  }
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -35,23 +64,34 @@ export async function GET(request) {
           path: data.path,
         });
       } catch (error) {
-        console.error('Error fetching article:', error);
-        return NextResponse.json({ error: 'Failed to fetch article' }, { status: 500 });
+        console.error('Error fetching article from GitHub:', error);
+        // Try to get from local file
+        try {
+          const localPath = path.join(process.cwd(), decodeURIComponent(path));
+          const content = fs.readFileSync(localPath, 'utf8');
+          const { data: frontMatter, content: articleContent } = matter(content);
+          return NextResponse.json({
+            ...frontMatter,
+            content: articleContent,
+            path: path,
+          });
+        } catch (localError) {
+          console.error('Error fetching article from local:', localError);
+          return NextResponse.json({ error: 'Failed to fetch article' }, { status: 500 });
+        }
       }
     } else if (sync === 'true') {
       await syncArticles();
     }
 
-    const { data } = await octokit.repos.getContent({
-      owner,
-      repo,
-      path: articlesJsonPath,
-    });
-
-    const content = Buffer.from(data.content, 'base64').toString('utf8');
-    const articles = JSON.parse(content);
-
-    return NextResponse.json(articles);
+    try {
+      const articles = await getArticlesFromGitHub();
+      return NextResponse.json(articles);
+    } catch (error) {
+      console.error('GitHub API error:', error);
+      const localArticles = getLocalArticles();
+      return NextResponse.json(localArticles);
+    }
   } catch (error) {
     console.error('Error fetching articles:', error);
     return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
@@ -131,6 +171,9 @@ async function syncArticles() {
       sha: currentFile.sha,
     });
 
+    // Also update local file
+    fs.writeFileSync(localArticlesJsonPath, JSON.stringify(articles, null, 2));
+
   } catch (error) {
     console.error('Error syncing articles:', error);
     throw error;
@@ -165,6 +208,10 @@ async function updateMdFile(article) {
       content: Buffer.from(updatedContent).toString('base64'),
       sha: currentFile.sha,
     });
+
+    // Also update local file
+    const localPath = path.join(process.cwd(), article.path);
+    fs.writeFileSync(localPath, updatedContent);
 
   } catch (error) {
     console.error('Error updating MD file:', error);
