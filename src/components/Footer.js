@@ -49,12 +49,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com/yourusername/coreappdashboard" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
+                <a href="https://github.com/businesszh/coreappdashboard" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
                   GitHub
                 </a>
               </li>
               <li>
-                <a href="https://twitter.com/gefei55" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
+                <a href="https://twitter.com/coreappdashboard" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
                   Twitter
                 </a>
               </li>
