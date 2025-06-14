@@ -1,10 +1,39 @@
 {
-  "name": "GitBase12",
-  "title": "GitBase - Open Source Dynamic Website CMS Without Database",
-  "description": "A Next.js site with Tailwind & Shadcn/UI, using GitHub API for content management. No database needed for dynamic updates.",
-  "slogan": "Open Source Dynamic Website CMS Without Database",
-  "intro": "GitBase is a dynamic, database-free website built with Next.js, Tailwind CSS, and Shadcn/UI, featuring a content management system powered by the GitHub API for seamless updates and administration.",
-  "url": "https://gitbase.app",
-  "author": "GitBase",
-  "footerText": "GitBase. All rights reserved."
+  "name": "Core App Dashboard",
+  "title": "Core App Dashboard - A Powerful Dashboard Solution",
+  "description": "A modern dashboard solution built with Next.js, Tailwind CSS, and Shadcn/UI, providing powerful tools for managing your applications.",
+  "keywords": "dashboard, next.js, web application, management tools, admin panel, tailwind css, shadcn/ui",
+  "slogan": "A Powerful Dashboard Solution",
+  "intro": "Core App Dashboard is a modern, feature-rich dashboard solution built with Next.js, Tailwind CSS, and Shadcn/UI, providing a seamless experience for managing your applications.",
+  "url": "https://coreappdashboard.net",
+  "author": "Core App Dashboard",
+  "footerText": "Core App Dashboard. All rights reserved.",
+  "social": {
+    "twitter": "https://twitter.com/coreappdashboard",
+    "github": "https://github.com/coreappdashboard",
+    "linkedin": "https://linkedin.com/company/coreappdashboard",
+    "facebook": "https://facebook.com/coreappdashboard",
+    "instagram": "https://instagram.com/coreappdashboard"
+  },
+  "seo": {
+    "googleSiteVerification": "google-site-verification=your-google-verification-code",
+    "yandexVerification": "yandex-verification=your-yandex-verification-code",
+    "robots": "index, follow",
+    "canonical": "https://coreappdashboard.net",
+    "alternateLanguages": {
+      "en": "https://coreappdashboard.net",
+      "zh": "https://coreappdashboard.net/zh"
+    }
+  },
+  "contact": {
+    "email": "contact@coreappdashboard.net",
+    "support": "support@coreappdashboard.net",
+    "sales": "sales@coreappdashboard.net"
+  },
+  "branding": {
+    "logo": "/logo.png",
+    "favicon": "/favicon.ico",
+    "primaryColor": "#0070f3",
+    "secondaryColor": "#1a1a1a"
+  }
 }
