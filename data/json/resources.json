@@ -5,9 +5,9 @@
     "url": "https://www.escambiaschools.org/site/default.aspx?PageType=3&ModuleInstanceID=6809&ViewID=5C8B25C6-C8F8-4BD5-923B-8A7C70A93DDA&RenderLoc=0&FlexDataID=6684&PageID=23&Comments=true"
   },
   {
-    "name": "Tailwind CSS",
-    "description": "A utility-first CSS framework",
-    "url": "https://tailwindcss.com/"
+    "name": "Core App Dashboard",
+    "description": "Core App Dashboard",
+    "url": "https://www.escambiaschools.org/dashboard"
   },
   {
     "name": "Shadcn/ui",
