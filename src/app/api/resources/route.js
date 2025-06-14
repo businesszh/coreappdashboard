@@ -7,7 +7,7 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
 });
 
-const owner = process.env.GITHUB_OWNER;
+const owner = 'businesszh';
 const repo = 'coreappdashboard';
 const githubPath = 'data/json/resources.json';
 const localPath = path.join(process.cwd(), 'data', 'json', 'resources.json');
