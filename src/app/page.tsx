@@ -8,8 +8,9 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Core App Dashboard - Home',
-  description: 'Welcome to Core App Dashboard, a powerful solution for managing your applications. Built with Next.js, Tailwind CSS, and Shadcn/UI.',
-  keywords: 'dashboard, admin panel, application management, next.js, tailwind css',
+  description: 'Welcome to Core App Dashboard, a powerful solution for managing your applications.Core App Dashboard 
+    is a centralized visual interface that provides an overview of an application's key features, data & functionalities.',
+  keywords: 'dashboard,Core App Dashboard , application management, Core App, App Dashboard ',
   openGraph: {
     title: 'Core App Dashboard - Home',
     description: 'Welcome to Core App Dashboard, a powerful solution for managing your applications.',
@@ -50,7 +51,8 @@ export default function Home() {
         </h1>
         <h2 className="text-2xl tracking-tighter sm:text-3xl md:text-3xl lg:text-3xl">A Powerful Dashboard Solution</h2>
         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
-          Core App Dashboard is a modern, feature-rich dashboard solution built with Next.js, Tailwind CSS, and Shadcn/UI, providing a seamless experience for managing your applications.
+          Core App Dashboard is a modern, feature-rich dashboard solution for managing your applications.Core App Dashboard.Core App Dashboard 
+    is a centralized visual interface that provides an overview of an application. 
         </p>
       </section>
 
