@@ -7,17 +7,17 @@
     "path": "data/md/222-test-bug.md"
   },
   {
-    "title": "Accessing the Admin Panel and Managing Resources in GitBase",
-    "description": "How to access the admin panel and manage your resource list in GitBase",
+    "title": "Best Practices for Designing Core App Dashboard",
+    "description": "Designing a Core App Dashboard requires careful planning and attention to detail to ensure it is user-friendly, secure, and scalable. Following best practices can help you create a dashboard that meets your users’ needs and enhances your application’s overall functionality.",
     "date": "2024-08-11T13:14:40.737Z",
-    "lastModified": "2025-06-15T04:37:55Z",
+    "lastModified": "2025-06-15T06:05:05Z",
     "path": "data/md/accessing-admin-managing-resources.md"
   },
   {
-    "title": "Configuring Environment Variables for GitBase",
-    "description": "How to configure GitBase environment variables",
+    "title": "Tools and Technologies for Core App Dashboard",
+    "description": "Selecting the right tools and technologies can greatly simplify the process of building a Core App Dashboard. Software as a Service (SaaS) tools offer robust functionalities, ease of use, and scalability, making them ideal for this purpose. Here, we review some of the top SaaS tools available for building Core App Dashboard, including ILLA Cloud, Plasmic, and Kohezion, among others.",
     "date": "2024-08-11T13:08:05.474Z",
-    "lastModified": "2024-08-11T13:08:05Z",
+    "lastModified": "2025-06-15T06:09:07Z",
     "path": "data/md/environment-variables.md"
   },
   {
@@ -28,17 +28,17 @@
     "path": "data/md/example.md"
   },
   {
-    "title": "Installing and Deploying GitBase: A Step-by-Step Guide",
-    "description": "A comprehensive guide for setting up GitBase locally and deploying it to Vercel, suitable for beginners.",
+    "title": "Step-by-Step Guide to Building a Core App Dashboard",
+    "description": "Choosing a SaaS solution to build a Core App Dashboard quickly involves several critical steps to ensure you select the best tool for your needs and make the most of its features. This guide will help you navigate the process, focusing on essential considerations and best practices.",
     "date": "2024-08-11",
-    "lastModified": "2024-08-11T11:34:30Z",
+    "lastModified": "2025-06-15T06:10:21Z",
     "path": "data/md/gitbase-install-guide.md"
   },
   {
-    "title": "GitBase: A Dynamic, Database-Free Website Solution",
-    "description": "Explore the features and implementation of GitBase, an innovative open-source project that combines Next.js, Tailwind CSS, and GitHub API for content management.",
+    "title": "Core App Dashboard: Data Visualization and Dashboards in Kohezion Online Relational Database",
+    "description": "Core App Dashboard: Data Visualization and Dashboards in Kohezion Online Relational Database",
     "date": "2024-08-11",
-    "lastModified": "2024-08-11T11:34:30Z",
+    "lastModified": "2025-06-15T06:06:31Z",
     "path": "data/md/gitbase-introduction.md"
   },
   {
