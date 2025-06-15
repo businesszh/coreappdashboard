@@ -7,10 +7,10 @@
     "path": "data/md/222-test-bug.md"
   },
   {
-    "title": "Accessing the Admin Panel and Managing Resources in GitBase",
-    "description": "How to access the admin panel and manage your resource list in GitBase",
+    "title": "Best Practices for Designing Core App Dashboard",
+    "description": "Designing a Core App Dashboard requires careful planning and attention to detail to ensure it is user-friendly, secure, and scalable. Following best practices can help you create a dashboard that meets your users’ needs and enhances your application’s overall functionality.",
     "date": "2024-08-11T13:14:40.737Z",
-    "lastModified": "2025-06-15T04:37:55Z",
+    "lastModified": "2025-06-15T06:05:05Z",
     "path": "data/md/accessing-admin-managing-resources.md"
   },
   {
