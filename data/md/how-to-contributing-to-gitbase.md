@@ -7,7 +7,7 @@ description: >-
   thing to manage your business. This article will explain the necessary details
   about core app and how it can help your business.
 date: '2024-08-16T03:57:46.153Z'
-lastModified: '2025-06-15T05:51:38.136Z'
+lastModified: '2025-06-15T05:51:46.553Z'
 ---
 Contents
 What is Core App Dashboard?
