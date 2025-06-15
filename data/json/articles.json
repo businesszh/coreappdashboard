@@ -28,10 +28,10 @@
     "path": "data/md/example.md"
   },
   {
-    "title": "Installing and Deploying GitBase: A Step-by-Step Guide",
-    "description": "A comprehensive guide for setting up GitBase locally and deploying it to Vercel, suitable for beginners.",
+    "title": "Step-by-Step Guide to Building a Core App Dashboard",
+    "description": "Choosing a SaaS solution to build a Core App Dashboard quickly involves several critical steps to ensure you select the best tool for your needs and make the most of its features. This guide will help you navigate the process, focusing on essential considerations and best practices.",
     "date": "2024-08-11",
-    "lastModified": "2024-08-11T11:34:30Z",
+    "lastModified": "2025-06-15T06:10:21Z",
     "path": "data/md/gitbase-install-guide.md"
   },
   {
