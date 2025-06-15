@@ -1,23 +1,16 @@
 [
   {
-    "title": "Example Article",
-    "description": "This is an example article",
-    "date": "2024-03-21T00:00:00.000Z",
-    "lastModified": "2024-03-21T00:00:00.000Z",
-    "path": "data/md/example.md"
-  },
-  {
-    "title": "test2-22 bug",
-    "description": "",
+    "title": "Core App Dashboard – How to Build One & Best Tools",
+    "description": "Core App Dashboard is not just a feature; it is are a pivotal component that drives efficiency, improves user experience, and provides real-time insights into app performance.  This comprehensive guide will cover everything you need to know about the Core App Dashboard. From understanding its core components and benefits to exploring real-world applications and best practices for design, we’ve got you covered.  By the end of this article, you will have the knowledge to enhance your app’s performance and user experience through effective dashboard implementation.",
     "date": "2025-02-21T19:49:08.333Z",
-    "lastModified": "2025-02-21T19:49:08Z",
+    "lastModified": "2025-06-15T05:54:46Z",
     "path": "data/md/222-test-bug.md"
   },
   {
     "title": "Accessing the Admin Panel and Managing Resources in GitBase",
     "description": "How to access the admin panel and manage your resource list in GitBase",
     "date": "2024-08-11T13:14:40.737Z",
-    "lastModified": "2024-11-06T03:24:55Z",
+    "lastModified": "2025-06-15T04:37:55Z",
     "path": "data/md/accessing-admin-managing-resources.md"
   },
   {
@@ -26,6 +19,13 @@
     "date": "2024-08-11T13:08:05.474Z",
     "lastModified": "2024-08-11T13:08:05Z",
     "path": "data/md/environment-variables.md"
+  },
+  {
+    "title": "Examples of Core App Dashboard in Various Industries",
+    "description": "Examples of Core App Dashboard in Various Industries",
+    "date": "2024-03-21T00:00:00.000Z",
+    "lastModified": "2025-06-15T05:58:04Z",
+    "path": "data/md/example.md"
   },
   {
     "title": "Installing and Deploying GitBase: A Step-by-Step Guide",
@@ -42,17 +42,17 @@
     "path": "data/md/gitbase-introduction.md"
   },
   {
-    "title": "Contributing to GitBase",
-    "description": "Hi, I'm Qiayue, creator of GitBase. I'm excited to welcome you to our project and look forward to your contributions in making GitBase even better!",
+    "title": "Core App Dashboard – Maximize App Security and Performance",
+    "description": "Are you running a business? And having issues to properly manage it? At Leed Software Development we know that it’s not an easy task to manage an organization. But the good point is that the Core App Dashboard is the best thing to manage your business. This article will explain the necessary details about core app and how it can help your business.",
     "date": "2024-08-16T03:57:46.153Z",
-    "lastModified": "2024-08-16T03:57:46Z",
+    "lastModified": "2025-06-15T05:51:46Z",
     "path": "data/md/how-to-contributing-to-gitbase.md"
   },
   {
-    "title": "Managing Articles in GitBase Admin Panel",
-    "description": "This guide will walk you through the process of viewing, editing, and creating new articles using the admin panel.",
+    "title": "What is a Core App Dashboard?",
+    "description": "A Core App Dashboard is a centralized interface that provides a comprehensive overview of an application’s performance, user activities, and critical data points. Think of it as your app’s control center, where you can monitor and manage various aspects seamlessly.",
     "date": "2024-08-11T13:16:44.231Z",
-    "lastModified": "2024-08-11T13:16:44Z",
+    "lastModified": "2025-06-15T05:57:02Z",
     "path": "data/md/managing-articles.md"
   }
 ]
