@@ -87,74 +87,91 @@ export async function GET(request) {
         isDevelopment,
         hasGithubToken: !!githubToken,
         githubOwner,
-        githubRepo
+        githubRepo,
+        nodeEnv: process.env.NODE_ENV
       });
 
-      // 首先尝试从本地文件获取
-      if (isDevelopment) {
-        try {
-          console.log('Trying to fetch article from local file:', articlePath);
-          const localPath = path.join(process.cwd(), decodeURIComponent(articlePath));
-          console.log('Local file path:', localPath);
-          if (fs.existsSync(localPath)) {
-            const content = fs.readFileSync(localPath, 'utf8');
-            const { data: frontMatter, content: articleContent } = matter(content);
-            console.log('Successfully read local file');
-            return NextResponse.json({
-              ...frontMatter,
-              content: articleContent,
-              path: articlePath,
-            });
-          } else {
-            console.log('Local file not found:', localPath);
-          }
-        } catch (localError) {
-          console.error('Error fetching article from local:', localError.message);
-          console.error('Error stack:', localError.stack);
-        }
-      }
-
-      // 如果本地获取失败或不在开发环境，尝试从 GitHub 获取
+      // 如果配置了 GitHub Token，尝试从 GitHub 获取
       if (octokit) {
         try {
           console.log('Fetching single article from GitHub:', articlePath);
           const decodedPath = decodeURIComponent(articlePath);
           console.log('Decoded path:', decodedPath);
           
-          const { data } = await octokit.repos.getContent({
-            owner: githubOwner,
-            repo: githubRepo,
-            path: decodedPath,
-          });
+          // 检查文件是否存在
+          try {
+            const { data } = await octokit.repos.getContent({
+              owner: githubOwner,
+              repo: githubRepo,
+              path: decodedPath,
+            });
 
-          console.log('GitHub API response received');
-          const content = Buffer.from(data.content, 'base64').toString('utf8');
-          const { data: frontMatter, content: articleContent } = matter(content);
-          console.log('Successfully parsed article content');
+            if (!data || !data.content) {
+              console.error('Invalid response from GitHub API:', data);
+              throw new Error('Invalid response from GitHub API');
+            }
 
-          return NextResponse.json({
-            ...frontMatter,
-            content: articleContent,
-            path: data.path,
-          });
+            console.log('GitHub API response received');
+            const content = Buffer.from(data.content, 'base64').toString('utf8');
+            console.log('Content decoded, length:', content.length);
+
+            try {
+              const { data: frontMatter, content: articleContent } = matter(content);
+              console.log('Successfully parsed article content');
+              console.log('Front matter:', frontMatter);
+
+              return NextResponse.json({
+                ...frontMatter,
+                content: articleContent,
+                path: data.path,
+              });
+            } catch (parseError) {
+              console.error('Error parsing markdown content:', parseError);
+              throw new Error('Failed to parse article content');
+            }
+          } catch (apiError) {
+            console.error('GitHub API error:', {
+              message: apiError.message,
+              status: apiError.status,
+              response: apiError.response?.data,
+              stack: apiError.stack
+            });
+
+            if (apiError.status === 404) {
+              return NextResponse.json({ 
+                error: 'Article not found',
+                details: {
+                  path: decodedPath,
+                  owner: githubOwner,
+                  repo: githubRepo
+                }
+              }, { status: 404 });
+            }
+
+            throw apiError;
+          }
         } catch (error) {
-          console.error('Error fetching article from GitHub:', error.message);
-          console.error('Error status:', error.status);
-          console.error('Error response:', error.response?.data);
-          console.error('Error stack:', error.stack);
+          console.error('Error in GitHub fetch process:', error);
+          return NextResponse.json({ 
+            error: 'Failed to fetch article from GitHub',
+            details: {
+              message: error.message,
+              status: error.status,
+              path: articlePath
+            }
+          }, { status: 500 });
         }
       } else {
         console.error('GitHub token not configured');
+        return NextResponse.json({ 
+          error: 'GitHub token not configured',
+          details: {
+            isDevelopment,
+            hasGithubToken: false,
+            articlePath
+          }
+        }, { status: 500 });
       }
-
-      return NextResponse.json({ 
-        error: 'Failed to fetch article',
-        details: {
-          isDevelopment,
-          hasGithubToken: !!githubToken,
-          articlePath
-        }
-      }, { status: 500 });
     } else if (sync === 'true') {
       console.log('Syncing articles...');
       await syncArticles();
@@ -176,7 +193,13 @@ export async function GET(request) {
     }
   } catch (error) {
     console.error('Error in GET handler:', error.message);
-    return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to fetch articles',
+      details: {
+        message: error.message,
+        stack: error.stack
+      }
+    }, { status: 500 });
   }
 }
 
