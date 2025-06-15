@@ -49,10 +49,10 @@
     "path": "data/md/how-to-contributing-to-gitbase.md"
   },
   {
-    "title": "",
-    "description": "",
+    "title": "What is a Core App Dashboard?",
+    "description": "A Core App Dashboard is a centralized interface that provides a comprehensive overview of an application’s performance, user activities, and critical data points. Think of it as your app’s control center, where you can monitor and manage various aspects seamlessly.",
     "date": "2024-08-11T13:16:44.231Z",
-    "lastModified": "2025-06-15T05:48:11Z",
+    "lastModified": "2025-06-15T05:57:02Z",
     "path": "data/md/managing-articles.md"
   }
 ]
