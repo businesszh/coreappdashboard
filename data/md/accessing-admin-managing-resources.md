@@ -2,7 +2,7 @@
 title: Accessing the Admin Panel and Managing Resources in GitBase
 description: How to access the admin panel and manage your resource list in GitBase
 date: '2024-08-11T13:14:40.737Z'
-lastModified: '2024-11-06T03:24:55.263Z'
+lastModified: '2025-06-15T04:36:27.642Z'
 ---
 # Accessing the Admin Panel and Managing Resources in GitBase
 
@@ -61,7 +61,6 @@ GitBase automatically syncs your changes with the GitHub repository configured i
 ## Best Practices
 
 1. **Regular Backups**: Although GitBase uses GitHub for version control, it's a good practice to periodically backup your `resources.json` file.
-2. **Descriptive Names and Descriptions**: Use clear, concise names and descriptions for your resources to make them easy to understand and find.
 3. **URL Verification**: Always double-check the URLs you enter to ensure they are correct and functional.
 4. **Consistent Formatting**: Maintain a consistent style in your resource descriptions for a professional appearance.
 

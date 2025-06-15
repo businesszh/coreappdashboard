@@ -1,5 +1,12 @@
 [
   {
+    "title": "Example Article",
+    "description": "This is an example article",
+    "date": "2024-03-21T00:00:00.000Z",
+    "lastModified": "2024-03-21T00:00:00.000Z",
+    "path": "data/md/example.md"
+  },
+  {
     "title": "test2-22 bug",
     "description": "",
     "date": "2025-02-21T19:49:08.333Z",
