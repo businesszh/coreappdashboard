@@ -14,10 +14,10 @@
     "path": "data/md/accessing-admin-managing-resources.md"
   },
   {
-    "title": "Configuring Environment Variables for GitBase",
-    "description": "How to configure GitBase environment variables",
+    "title": "Tools and Technologies for Core App Dashboard",
+    "description": "Selecting the right tools and technologies can greatly simplify the process of building a Core App Dashboard. Software as a Service (SaaS) tools offer robust functionalities, ease of use, and scalability, making them ideal for this purpose. Here, we review some of the top SaaS tools available for building Core App Dashboard, including ILLA Cloud, Plasmic, and Kohezion, among others.",
     "date": "2024-08-11T13:08:05.474Z",
-    "lastModified": "2024-08-11T13:08:05Z",
+    "lastModified": "2025-06-15T06:09:07Z",
     "path": "data/md/environment-variables.md"
   },
   {
