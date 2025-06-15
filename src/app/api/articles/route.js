@@ -5,45 +5,44 @@ import fs from 'fs';
 import path from 'path';
 
 // 检查环境变量
-if (!process.env.GITHUB_TOKEN) {
-  console.error('GITHUB_TOKEN is not set');
-}
-if (!process.env.GITHUB_OWNER) {
-  console.error('GITHUB_OWNER is not set');
-}
-if (!process.env.GITHUB_REPO) {
-  console.error('GITHUB_REPO is not set');
-}
+const isDevelopment = process.env.NODE_ENV === 'development';
+const githubToken = process.env.GITHUB_TOKEN;
+const githubOwner = process.env.GITHUB_OWNER || 'businesszh';
+const githubRepo = process.env.GITHUB_REPO || 'coreappdashboard';
 
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN
-});
+// 初始化 Octokit（仅在设置了 token 时）
+const octokit = githubToken ? new Octokit({ auth: githubToken }) : null;
 
-const owner = process.env.GITHUB_OWNER || 'businesszh';
-const repo = process.env.GITHUB_REPO || 'coreappdashboard';
 const articlesJsonPath = 'data/json/articles.json';
 const mdFolderPath = 'data/md';
 const localArticlesJsonPath = path.join(process.cwd(), 'data', 'json', 'articles.json');
 const localMdFolderPath = path.join(process.cwd(), 'data', 'md');
 
-// 确保本地目录存在
-try {
-  if (!fs.existsSync(path.dirname(localArticlesJsonPath))) {
-    fs.mkdirSync(path.dirname(localArticlesJsonPath), { recursive: true });
+// 确保本地目录存在（仅在开发环境中）
+if (isDevelopment) {
+  try {
+    if (!fs.existsSync(path.dirname(localArticlesJsonPath))) {
+      fs.mkdirSync(path.dirname(localArticlesJsonPath), { recursive: true });
+    }
+    if (!fs.existsSync(localMdFolderPath)) {
+      fs.mkdirSync(localMdFolderPath, { recursive: true });
+    }
+  } catch (error) {
+    console.error('Error creating directories:', error);
   }
-  if (!fs.existsSync(localMdFolderPath)) {
-    fs.mkdirSync(localMdFolderPath, { recursive: true });
-  }
-} catch (error) {
-  console.error('Error creating directories:', error);
 }
 
 async function getArticlesFromGitHub() {
+  if (!octokit) {
+    console.log('GitHub token not configured, skipping GitHub fetch');
+    return [];
+  }
+
   try {
     console.log('Fetching articles from GitHub...');
     const { data } = await octokit.repos.getContent({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: articlesJsonPath,
     });
 
@@ -83,56 +82,65 @@ export async function GET(request) {
 
   try {
     if (articlePath) {
-      // Fetch single article
-      try {
-        console.log('Fetching single article from GitHub:', articlePath);
-        const { data } = await octokit.repos.getContent({
-          owner,
-          repo,
-          path: decodeURIComponent(articlePath),
-        });
-
-        const content = Buffer.from(data.content, 'base64').toString('utf8');
-        const { data: frontMatter, content: articleContent } = matter(content);
-
-        return NextResponse.json({
-          ...frontMatter,
-          content: articleContent,
-          path: data.path,
-        });
-      } catch (error) {
-        console.error('Error fetching article from GitHub:', error.message);
-        // Try to get from local file
+      // 首先尝试从本地文件获取
+      if (isDevelopment) {
         try {
           console.log('Trying to fetch article from local file:', articlePath);
           const localPath = path.join(process.cwd(), decodeURIComponent(articlePath));
-          if (!fs.existsSync(localPath)) {
-            console.error('Local article file not found:', localPath);
-            throw new Error('Article not found');
+          if (fs.existsSync(localPath)) {
+            const content = fs.readFileSync(localPath, 'utf8');
+            const { data: frontMatter, content: articleContent } = matter(content);
+            return NextResponse.json({
+              ...frontMatter,
+              content: articleContent,
+              path: articlePath,
+            });
           }
-          const content = fs.readFileSync(localPath, 'utf8');
+        } catch (localError) {
+          console.error('Error fetching article from local:', localError.message);
+        }
+      }
+
+      // 如果本地获取失败或不在开发环境，尝试从 GitHub 获取
+      if (octokit) {
+        try {
+          console.log('Fetching single article from GitHub:', articlePath);
+          const { data } = await octokit.repos.getContent({
+            owner: githubOwner,
+            repo: githubRepo,
+            path: decodeURIComponent(articlePath),
+          });
+
+          const content = Buffer.from(data.content, 'base64').toString('utf8');
           const { data: frontMatter, content: articleContent } = matter(content);
+
           return NextResponse.json({
             ...frontMatter,
             content: articleContent,
-            path: articlePath,
+            path: data.path,
           });
-        } catch (localError) {
-          console.error('Error fetching article from local:', localError.message);
-          return NextResponse.json({ error: 'Failed to fetch article' }, { status: 500 });
+        } catch (error) {
+          console.error('Error fetching article from GitHub:', error.message);
         }
       }
+
+      return NextResponse.json({ error: 'Failed to fetch article' }, { status: 500 });
     } else if (sync === 'true') {
       console.log('Syncing articles...');
       await syncArticles();
     }
 
+    // 获取文章列表
     try {
-      const articles = await getArticlesFromGitHub();
-      return NextResponse.json(articles);
+      if (octokit) {
+        const articles = await getArticlesFromGitHub();
+        return NextResponse.json(articles);
+      } else {
+        const localArticles = getLocalArticles();
+        return NextResponse.json(localArticles);
+      }
     } catch (error) {
-      console.error('GitHub API error:', error.message);
-      console.log('Falling back to local articles...');
+      console.error('Error fetching articles:', error.message);
       const localArticles = getLocalArticles();
       return NextResponse.json(localArticles);
     }
@@ -152,44 +160,53 @@ export async function POST(request) {
 
     console.log('Updating article:', article.title);
     
-    // 检查本地文件是否存在
-    const localPath = path.join(process.cwd(), article.path);
-    if (!fs.existsSync(localPath)) {
-      return NextResponse.json({ error: 'Article file not found' }, { status: 404 });
-    }
+    // 在开发环境中更新本地文件
+    if (isDevelopment) {
+      const localPath = path.join(process.cwd(), article.path);
+      if (!fs.existsSync(localPath)) {
+        return NextResponse.json({ error: 'Article file not found' }, { status: 404 });
+      }
 
-    // 更新本地文件
-    try {
-      const currentContent = fs.readFileSync(localPath, 'utf8');
-      const { data: frontMatter } = matter(currentContent);
-
-      const updatedFrontMatter = {
-        ...frontMatter,
-        title: article.title,
-        description: article.description,
-        lastModified: new Date().toISOString(),
-      };
-
-      const updatedContent = matter.stringify(article.content, updatedFrontMatter);
-      fs.writeFileSync(localPath, updatedContent);
-      console.log('Successfully updated local MD file');
-    } catch (error) {
-      console.error('Error updating local file:', error);
-      return NextResponse.json({ error: 'Failed to update local file' }, { status: 500 });
-    }
-
-    // 如果设置了 GitHub Token，则同步到 GitHub
-    if (process.env.GITHUB_TOKEN) {
       try {
-        await updateMdFile(article);
-        await syncArticles();
+        const currentContent = fs.readFileSync(localPath, 'utf8');
+        const { data: frontMatter } = matter(currentContent);
+
+        const updatedFrontMatter = {
+          ...frontMatter,
+          title: article.title,
+          description: article.description,
+          lastModified: new Date().toISOString(),
+        };
+
+        const updatedContent = matter.stringify(article.content, updatedFrontMatter);
+        fs.writeFileSync(localPath, updatedContent);
+        console.log('Successfully updated local MD file');
       } catch (error) {
-        console.error('Error syncing with GitHub:', error);
-        // 不返回错误，因为本地文件已经更新成功
+        console.error('Error updating local file:', error);
+        return NextResponse.json({ error: 'Failed to update local file' }, { status: 500 });
       }
     }
 
-    return NextResponse.json({ message: 'Article updated successfully' });
+    // 如果配置了 GitHub Token，则更新 GitHub 文件
+    if (octokit) {
+      try {
+        await updateMdFile(article);
+        await syncArticles();
+        return NextResponse.json({ message: 'Article updated successfully' });
+      } catch (error) {
+        console.error('Error updating GitHub file:', error);
+        if (isDevelopment) {
+          // 在开发环境中，如果本地更新成功但 GitHub 更新失败，仍然返回成功
+          return NextResponse.json({ message: 'Article updated locally successfully' });
+        }
+        return NextResponse.json({ error: 'Failed to update article on GitHub' }, { status: 500 });
+      }
+    } else if (isDevelopment) {
+      // 在开发环境中，如果没有配置 GitHub Token，只更新本地文件
+      return NextResponse.json({ message: 'Article updated locally successfully' });
+    } else {
+      return NextResponse.json({ error: 'GitHub token not configured' }, { status: 500 });
+    }
   } catch (error) {
     console.error('Error updating article:', error.message);
     return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
@@ -197,12 +214,17 @@ export async function POST(request) {
 }
 
 async function syncArticles() {
+  if (!octokit) {
+    console.log('GitHub token not configured, skipping sync');
+    return;
+  }
+
   try {
     console.log('Starting article sync...');
     // Fetch all MD files
     const { data: files } = await octokit.repos.getContent({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: mdFolderPath,
     });
 
@@ -212,8 +234,8 @@ async function syncArticles() {
     const articles = await Promise.all(mdFiles.map(async file => {
       try {
         const { data } = await octokit.repos.getContent({
-          owner,
-          repo,
+          owner: githubOwner,
+          repo: githubRepo,
           path: file.path,
         });
 
@@ -222,8 +244,8 @@ async function syncArticles() {
 
         // Fetch the last commit for this file
         const { data: commits } = await octokit.repos.listCommits({
-          owner,
-          repo,
+          owner: githubOwner,
+          repo: githubRepo,
           path: file.path,
           per_page: 1
         });
@@ -248,23 +270,27 @@ async function syncArticles() {
 
     // Update articles.json
     const { data: currentFile } = await octokit.repos.getContent({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: articlesJsonPath,
     });
 
     await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: articlesJsonPath,
       message: 'Sync articles',
       content: Buffer.from(JSON.stringify(validArticles, null, 2)).toString('base64'),
       sha: currentFile.sha,
     });
 
-    // Also update local file
-    fs.writeFileSync(localArticlesJsonPath, JSON.stringify(validArticles, null, 2));
-    console.log('Successfully synced articles');
+    // Also update local file in development
+    if (isDevelopment) {
+      fs.writeFileSync(localArticlesJsonPath, JSON.stringify(validArticles, null, 2));
+      console.log('Successfully synced articles locally');
+    }
+
+    console.log('Successfully synced articles to GitHub');
 
   } catch (error) {
     console.error('Error syncing articles:', error.message);
@@ -273,11 +299,16 @@ async function syncArticles() {
 }
 
 async function updateMdFile(article) {
+  if (!octokit) {
+    console.log('GitHub token not configured, skipping GitHub update');
+    return;
+  }
+
   try {
     console.log('Updating MD file:', article.path);
     const { data: currentFile } = await octokit.repos.getContent({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: article.path,
     });
 
@@ -294,18 +325,15 @@ async function updateMdFile(article) {
     const updatedContent = matter.stringify(article.content, updatedFrontMatter);
 
     await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
+      owner: githubOwner,
+      repo: githubRepo,
       path: article.path,
       message: `Update article: ${article.title}`,
       content: Buffer.from(updatedContent).toString('base64'),
       sha: currentFile.sha,
     });
 
-    // Also update local file
-    const localPath = path.join(process.cwd(), article.path);
-    fs.writeFileSync(localPath, updatedContent);
-    console.log('Successfully updated MD file');
+    console.log('Successfully updated MD file on GitHub');
 
   } catch (error) {
     console.error('Error updating MD file:', error.message);
